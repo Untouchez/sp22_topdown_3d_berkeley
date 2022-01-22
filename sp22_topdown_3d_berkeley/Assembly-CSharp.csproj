@@ -53,8 +53,30 @@
     <UnityVersion>2020.3.17f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
+    <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Laser.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonBeamStatic.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonEffectCycler.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonLoopScript.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonButtonScript.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonSceneSelect.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonLightFade.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonFireProjectile.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonSoundSpawn.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonOrbit.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonRotation.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonBeamScript.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonLightFlicker.cs" />
+    <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonProjectileScript.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyIntense.Shader" />
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyRimLightSelective.shader" />
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyRimLightSolid.shader" />
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Polygon Arsenal 2.0 - Documentation.txt" />
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyRimLightTransparent.shader" />
+    <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyLitSurface.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -281,6 +303,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@2.0.0\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst.Unsafe">
+      <HintPath>Library\PackageCache\com.unity.burst@1.3.4\Unity.Burst.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.17f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -707,6 +732,18 @@
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Animation.Rigging">
+      <HintPath>Library\ScriptAssemblies\Unity.Animation.Rigging.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Animation.Rigging.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Animation.Rigging.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst">
+      <HintPath>Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
