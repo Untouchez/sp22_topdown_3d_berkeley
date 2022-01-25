@@ -6,9 +6,11 @@ using UnityEngine.Animations.Rigging;
 public class Player : MonoBehaviour
 {
     public Animator rigAnim;
+    public TwoBoneIKConstraint leftArm;
+    public TwoBoneIKConstraint rightArm;
     public MultiAimConstraint topHalfAim;
     public MultiAimConstraint weaponAim;
-
+    public WeaponHandler weaponHandler;
 
     public Transform mousePos;
     public Camera mainCamera;
@@ -32,6 +34,11 @@ public class Player : MonoBehaviour
     public float rotSpeed;
     public bool lookAt;
 
+    public bool isRolling;
+    public float rollForce;
+    public bool canRotate;
+    public bool canMove;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,8 +56,53 @@ public class Player : MonoBehaviour
 
         //moves player and plays animation
         HandleMovement();
+
+        HandleRoll();
     }
 
+    Vector3 tempDir;
+    void HandleRoll()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if(!isRolling)
+                StartCoroutine(StartRoll());
+        }
+        if (isRolling)
+        {
+            rb.velocity += tempDir * rollForce;
+            RotateTowardsDir(tempDir);
+        }
+    }
+
+    IEnumerator StartRoll()
+    {
+        weaponHandler.weapon.SetActive(false);
+        isRolling = true;
+        weaponHandler.canShoot = false;
+        topHalfAim.weight = 0;
+        StartCoroutine(TurnOffArms());
+        lookAt = false;
+        weaponAim.weight = 0;
+        canRotate = false;
+        anim.SetLayerWeight(1, 0);
+        anim.Play("roll", 0, 0);
+        tempDir = new Vector3(inputRaw.x, 0, inputRaw.y);
+
+        yield return new WaitForSeconds(0.8f);
+
+        anim.SetLayerWeight(1, 1);
+        weaponHandler.weapon.SetActive(true);
+        canRotate = true;
+        topHalfAim.weight = 1;
+        lookAt = true;
+        weaponAim.weight = 1;
+        leftArm.weight = 1;
+        rightArm.weight = 1;
+        weaponHandler.canShoot = true;
+
+        isRolling = false;
+    }
     void HandleLookAt()
     {
         if (Input.GetMouseButton(1))
@@ -71,8 +123,8 @@ public class Player : MonoBehaviour
         else
         {
             topHalfAim.weight = 0;
-            lookAt = false;
             weaponAim.weight = 0;
+            lookAt = false;
         }
         anim.SetBool("lookAt", lookAt);
         rigAnim.SetBool("lookAt", lookAt);
@@ -124,6 +176,9 @@ public class Player : MonoBehaviour
 
     void HandleMovement()
     {
+        if (!canMove)
+            return;
+
         if (inputRaw.x == 0)
             inputCalculated.x = Mathf.MoveTowards(inputCalculated.x, 0, decceleration * Time.deltaTime);
         else
@@ -165,50 +220,60 @@ public class Player : MonoBehaviour
 
     void HandleRotation()
     {
+        if (!canRotate)
+            return;
+
         if (lookAt)
         {
             RotateTowards(mousePos); 
         } else {
             RotateTowardsDir(rotDir);
         }
+    }
 
-        //https://docs.unity3d.com/ScriptReference/Vector3.RotateTowards.html
-        void RotateTowards(Transform target)
-        {
-            // Determine which direction to rotate towards
-            Vector3 targetDirection = target.position - transform.position;
-            targetDirection.y = 0;
-            float angleDifference = Vector3.Angle(transform.forward, targetDirection);
-            // The step size is equal to speed times frame time.
-            float singleStep = rotSpeed * Time.deltaTime;
+    //https://docs.unity3d.com/ScriptReference/Vector3.RotateTowards.html
+    void RotateTowards(Transform target)
+    {
+        // Determine which direction to rotate towards
+        Vector3 targetDirection = target.position - transform.position;
+        targetDirection.y = 0;
+        float angleDifference = Vector3.Angle(transform.forward, targetDirection);
+        // The step size is equal to speed times frame time.
+        float singleStep = rotSpeed * Time.deltaTime;
 
-            // Rotate the forward vector towards the target direction by one step
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+        // Rotate the forward vector towards the target direction by one step
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
-            // Draw a ray pointing at our target in
-            Debug.DrawRay(transform.position, newDirection, Color.red);
-            if (angleDifference < 30)
-                return;
-            // Calculate a rotation a step closer to the target and applies rotation to this object
-            transform.rotation = Quaternion.LookRotation(newDirection);
-        }
+        // Draw a ray pointing at our target in
+        Debug.DrawRay(transform.position, newDirection, Color.red);
+        if (angleDifference < 30)
+            return;
+        // Calculate a rotation a step closer to the target and applies rotation to this object
+        transform.rotation = Quaternion.LookRotation(newDirection);
+    }
 
-        void RotateTowardsDir(Vector3 target)
-        {
-            float angleDifference = Vector3.Angle(transform.forward, target);
-            // The step size is equal to speed times frame time.
-            float singleStep = rotSpeed * Time.deltaTime;
+    void RotateTowardsDir(Vector3 target)
+    {
+        float angleDifference = Vector3.Angle(transform.forward, target);
+        // The step size is equal to speed times frame time.
+        float singleStep = rotSpeed * Time.deltaTime;
 
-            // Rotate the forward vector towards the target direction by one step
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, target, singleStep, 0.0f);
-            newDirection.y = 0;
-            // Draw a ray pointing at our target in
-            Debug.DrawRay(transform.position, newDirection, Color.red);
-            if (angleDifference < 30)
-                return;
-            // Calculate a rotation a step closer to the target and applies rotation to this object
-            transform.rotation = Quaternion.LookRotation(newDirection);
-        }
+        // Rotate the forward vector towards the target direction by one step
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, target, singleStep, 0.0f);
+        newDirection.y = 0;
+        // Draw a ray pointing at our target in
+        Debug.DrawRay(transform.position, newDirection, Color.red);
+        if (angleDifference < 30)
+            return;
+        // Calculate a rotation a step closer to the target and applies rotation to this object
+        transform.rotation = Quaternion.LookRotation(newDirection);
+    }
+
+    private IEnumerator TurnOffArms()
+    {
+        yield return new WaitForEndOfFrame();
+        leftArm.weight = 0;
+        rightArm.weight = 0;
     }
 
     void FootR()

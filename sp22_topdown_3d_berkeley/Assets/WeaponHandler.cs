@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeaponHandler : MonoBehaviour
 {
+    public GameObject weapon;
     public LayerMask ignore;
     public Transform mousePos;
     public ParticleSystem muzzleFlash;
@@ -13,6 +14,7 @@ public class WeaponHandler : MonoBehaviour
     public float FireRate;
     private float lastFired;
 
+    public bool canShoot;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +25,8 @@ public class WeaponHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!canShoot)
+            return;
         if(Input.GetMouseButton(0))
         {
             if (Time.time - lastFired > 1 / FireRate)
@@ -43,16 +47,12 @@ public class WeaponHandler : MonoBehaviour
         Vector3 direction = muzzlePos.forward*1000f;
         if(Physics.Raycast(origin: muzzlePos.position,direction: direction, out RaycastHit hit)) 
         {
+            hit.transform.GetComponent<Health>()?.TakeDamage(10);
+
             LR.SetPosition(1, hit.point);
             hitEffect.transform.position = hit.point;
             hitEffect.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.Euler(new Vector3(90,0,0));
             hitEffect.Play(true);
-            
-            //foreach(Transform child in hitEffect.transform)
-            //{
-            //    child.GetComponent<ParticleSystem>().Emit(1);
-            //}
-            //hitEffect.Emit(1);
         } else {
             LR.SetPosition(1, direction);
         }
