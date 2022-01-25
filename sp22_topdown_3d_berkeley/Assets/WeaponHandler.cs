@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class WeaponHandler : MonoBehaviour
 {
+    public Player player;
+
+    public GameObject magazineInGun;
+    public GameObject magazineInHand;
+    public Transform hand;
+
+
+    public Animator rigAnim;
     public GameObject weapon;
     public LayerMask ignore;
     public Transform mousePos;
@@ -13,6 +21,8 @@ public class WeaponHandler : MonoBehaviour
     public LineRenderer LR;
     public float FireRate;
     private float lastFired;
+
+    public bool isReloading;
 
     public bool canShoot;
 
@@ -25,7 +35,7 @@ public class WeaponHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!canShoot)
+        if (!canShoot || isReloading)
             return;
         if(Input.GetMouseButton(0))
         {
@@ -37,7 +47,22 @@ public class WeaponHandler : MonoBehaviour
                 tempShoot = StartCoroutine(Shoot());
             }
         }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            StartCoroutine(Reload());
+        }
     }
+
+    IEnumerator Reload()
+    {
+        player.lookAt = false;
+        rigAnim.Play("reload", 0, 0);
+        isReloading = true;
+        yield return new WaitForSeconds(1.5f);
+        isReloading = false;
+    }
+
     Coroutine tempShoot;
     IEnumerator Shoot()
     {

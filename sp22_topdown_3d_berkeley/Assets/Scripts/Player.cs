@@ -6,8 +6,6 @@ using UnityEngine.Animations.Rigging;
 public class Player : MonoBehaviour
 {
     public Animator rigAnim;
-    public TwoBoneIKConstraint leftArm;
-    public TwoBoneIKConstraint rightArm;
     public MultiAimConstraint topHalfAim;
     public MultiAimConstraint weaponAim;
     public WeaponHandler weaponHandler;
@@ -81,7 +79,6 @@ public class Player : MonoBehaviour
         isRolling = true;
         weaponHandler.canShoot = false;
         topHalfAim.weight = 0;
-        StartCoroutine(TurnOffArms());
         lookAt = false;
         weaponAim.weight = 0;
         canRotate = false;
@@ -97,12 +94,11 @@ public class Player : MonoBehaviour
         topHalfAim.weight = 1;
         lookAt = true;
         weaponAim.weight = 1;
-        leftArm.weight = 1;
-        rightArm.weight = 1;
         weaponHandler.canShoot = true;
 
         isRolling = false;
     }
+
     void HandleLookAt()
     {
         if (Input.GetMouseButton(1))
@@ -119,14 +115,21 @@ public class Player : MonoBehaviour
                 Vector3 newPos = hit.point;
                 mousePos.position = newPos;
             }
-        }
-        else
-        {
+            anim.SetBool("lookAt", lookAt);
+
+        } else { 
+            anim.SetBool("lookAt", lookAt);
             topHalfAim.weight = 0;
             weaponAim.weight = 0;
             lookAt = false;
         }
-        anim.SetBool("lookAt", lookAt);
+        if(weaponHandler.isReloading)
+        {
+            lookAt = false;
+            anim.SetBool("lookAt", lookAt);
+            topHalfAim.weight = 0;
+            weaponAim.weight = 0;
+        }
         rigAnim.SetBool("lookAt", lookAt);
     }
 
@@ -267,13 +270,6 @@ public class Player : MonoBehaviour
             return;
         // Calculate a rotation a step closer to the target and applies rotation to this object
         transform.rotation = Quaternion.LookRotation(newDirection);
-    }
-
-    private IEnumerator TurnOffArms()
-    {
-        yield return new WaitForEndOfFrame();
-        leftArm.weight = 0;
-        rightArm.weight = 0;
     }
 
     void FootR()
