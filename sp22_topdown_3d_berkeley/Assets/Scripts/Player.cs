@@ -61,13 +61,12 @@ public class Player : MonoBehaviour
     Vector3 tempDir;
     void HandleRoll()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift))
-        {
+        if(Input.GetKeyDown(KeyCode.LeftShift)) {
             if(!isRolling)
                 StartCoroutine(StartRoll());
         }
-        if (isRolling)
-        {
+            
+        if (isRolling) {
             rb.velocity += tempDir * rollForce;
             RotateTowardsDir(tempDir);
         }
@@ -101,30 +100,23 @@ public class Player : MonoBehaviour
 
     void HandleLookAt()
     {
-        if (Input.GetMouseButton(1))
-        {
+        if (Input.GetMouseButton(1)) {
             topHalfAim.weight = 1;
             weaponAim.weight = 1;
             lookAt = true;
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(origin: ray.origin,
-                                direction: ray.direction,
-                                out RaycastHit hit,
-                                maxDistance: 300f))
-            {
+            if (Physics.Raycast(origin: ray.origin,direction: ray.direction,out RaycastHit hit,maxDistance: 300f)) {
                 Vector3 newPos = hit.point;
                 mousePos.position = newPos;
             }
             anim.SetBool("lookAt", lookAt);
-
         } else { 
             anim.SetBool("lookAt", lookAt);
             topHalfAim.weight = 0;
             weaponAim.weight = 0;
             lookAt = false;
         }
-        if(weaponHandler.isReloading)
-        {
+        if(weaponHandler.isReloading) {
             lookAt = false;
             anim.SetBool("lookAt", lookAt);
             topHalfAim.weight = 0;
@@ -140,25 +132,22 @@ public class Player : MonoBehaviour
 
         float calculatedX;
         float calculatedY;
-        if (lookAt)
-        {
+
+        if (lookAt) {
             calculatedX = inputRaw.x * lookAtAcceleration * Time.deltaTime;
             calculatedY = inputRaw.y * lookAtAcceleration * Time.deltaTime;
 
             inputCalculated.x = Mathf.Clamp(inputCalculated.x, -lookAtMovementClamp, lookAtMovementClamp);
             inputCalculated.y = Mathf.Clamp(inputCalculated.y, -lookAtMovementClamp, lookAtMovementClamp);
-        }
-        else
-        {
+        } else {
             calculatedX = inputRaw.x * acceleration * Time.deltaTime;
             calculatedY = inputRaw.y * acceleration * Time.deltaTime;
 
             inputCalculated.x = Mathf.Clamp(inputCalculated.x, -movementClamp, movementClamp);
             inputCalculated.y = Mathf.Clamp(inputCalculated.y, -movementClamp, movementClamp);
-
         }
-        if(differenceAngle > 90)
-        {
+
+        if(differenceAngle > 90) {
             calculatedX /= 2;
             calculatedY /= 2;
         }
@@ -198,16 +187,12 @@ public class Player : MonoBehaviour
             {
                 anim.SetFloat("Vertical", animVector.y);
                 anim.SetFloat("Horizontal", animVector.x);
-            }
-            else
-            {
+            } else {
                 anim.SetFloat("Vertical", 0);
                 anim.SetFloat("Horizontal", 0);
             }
             HandleRotation();
-        }
-        else
-        {
+        } else {
             if (inputCalculated != Vector2.zero)
             {
                 anim.SetFloat("Vertical", inputCalculated.magnitude / 5);
@@ -216,8 +201,7 @@ public class Player : MonoBehaviour
             {
                 anim.SetFloat("Vertical", 0);
             }
-        }
-        
+        }      
         rb.velocity = new Vector3(inputCalculated.x, 0, inputCalculated.y);
     }
 

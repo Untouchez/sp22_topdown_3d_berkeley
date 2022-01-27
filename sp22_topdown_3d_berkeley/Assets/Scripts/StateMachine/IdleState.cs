@@ -6,19 +6,48 @@ public class IdleState : State
 {
     public LayerMask ignore;
     public ChaseState chase;
-    public bool canSeePlayer;
+
+    public float nearRadius;
+    public float angleRadius;
     public float seeDistance;
+    public float updateRate;
+
+    public bool withinAngle;
+    public bool withinSeeDistance;
+    public bool canSeePlayer;
+
+    public float distanceToPlayer;
+    public float angle;
+
 
     public override State RunCurrentState()
     {
-        
-        canSeePlayer = Vector3.Distance(this.transform.position,player.position)<seeDistance;
-        if(canSeePlayer && CanSeePlayer())
+        anim.SetFloat("speed", agent.velocity.magnitude / agent.speed);
+        distanceToPlayer = Vector3.Distance(this.transform.position, player.position);
+        withinSeeDistance = distanceToPlayer < seeDistance;
+
+        if (!withinSeeDistance)
+            return this;
+        canSeePlayer = CanSeePlayer();
+
+        if(canSeePlayer)
         {
-            return chase;
+            //CHECK IF CLOSE TO PLAYER 
+            if (distanceToPlayer < nearRadius)
+            {
+                chase.AwakeCurrentState();
+                return chase;
+            }
+            angle = Vector3.Angle(transform.forward, player.position - transform.position);
+
+            //CHECK IF PLAYER IS INFRONT OF ME
+            withinAngle = angle < angleRadius;
+            if (withinAngle)
+            {
+                chase.AwakeCurrentState();
+                return chase;
+            }
         }
-        anim.SetFloat("horizontal", Mathf.SmoothStep(anim.GetFloat("horizontal"), 0, RandomTransitionSpeed()));
-        anim.SetFloat("vertical", Mathf.SmoothStep(anim.GetFloat("vertical"), 0, RandomTransitionSpeed()));
         return this;
     }
 
@@ -36,8 +65,9 @@ public class IdleState : State
         return false;
     }
 
-    public float RandomTransitionSpeed()
+    public override void AwakeCurrentState()
     {
-        return Random.Range(0.3f, 0.6f);
+        stateManager.updateRate = updateRate;
+        print("entered: " + this);
     }
 }

@@ -8,6 +8,8 @@ public class AttackState : State
     public ChaseState chaseState;
     public float attackRange;
     public bool canUpdate;
+    public float updateRate;
+
     public override State RunCurrentState()
     {
         if (Vector3.Distance(this.transform.position, player.position) > attackRange+2 || !CanSeePlayer())
@@ -38,7 +40,12 @@ public class AttackState : State
     {
         if (!canUpdate)
             return;
-        Me.LookAt(player);
         anim.SetFloat("speed", Mathf.MoveTowards(anim.GetFloat("speed"), 0, 1f*Time.deltaTime));
+    }
+
+    public override void AwakeCurrentState()
+    {
+        stateManager.updateRate = updateRate;
+        print("entered: " + this);
     }
 }

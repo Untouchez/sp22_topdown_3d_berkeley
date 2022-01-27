@@ -24,4 +24,14 @@ public class Enemy : Health
         base.TakeDamage(damage);
         blink.BlinkME(0.15f, 5f, Color.white);
     }
+
+    public void FootR()
+    {
+
+    }
+
+    public void FootL()
+    {
+
+    }
 }

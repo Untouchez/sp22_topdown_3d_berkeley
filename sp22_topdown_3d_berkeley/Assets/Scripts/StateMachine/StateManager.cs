@@ -9,17 +9,20 @@ public class StateManager : MonoBehaviour
     public Transform Me;
     public Transform player;
     public State currentState;
-    public NavMeshAgent agent;
+
     public float updateRate;
     private float timeRemaining;
+
     public void Awake()
     {
         foreach(State state in GetComponentsInChildren<State>())
         {
-            state.Me = Me;
+            state.me = Me;
             state.anim = Me.GetComponent<Animator>();
             state.agent = Me.GetComponent<NavMeshAgent>();
+
             state.player = player;
+            state.stateManager = this;
         }
         timeRemaining = updateRate;
     }
