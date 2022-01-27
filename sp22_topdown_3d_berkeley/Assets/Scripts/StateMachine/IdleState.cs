@@ -4,27 +4,38 @@ using UnityEngine;
 
 public class IdleState : State
 {
-    public LayerMask ignore;
     public ChaseState chase;
+    public Vector3 startPos;
+    public Vector3 startDir;
 
-    public float nearRadius;
-    public float angleRadius;
     public float seeDistance;
-    public float updateRate;
 
     public bool withinAngle;
     public bool withinSeeDistance;
     public bool canSeePlayer;
 
     public float distanceToPlayer;
-    public float angle;
 
+    public void Start()
+    {
+        startPos = transform.position;
+        startDir = me.transform.forward;
+    }
 
     public override State RunCurrentState()
     {
-        anim.SetFloat("speed", agent.velocity.magnitude / agent.speed);
         distanceToPlayer = Vector3.Distance(this.transform.position, player.position);
         withinSeeDistance = distanceToPlayer < seeDistance;
+        if (Vector3.Distance(startPos, transform.position) >= agent.stoppingDistance + 0.5f)
+        {
+            agent.SetDestination(startPos);
+            anim.SetFloat("speed", Mathf.Clamp(agent.velocity.magnitude / agent.speed,0,0.5f));
+        }
+        else
+        {
+            anim.SetFloat("speed", agent.velocity.magnitude / agent.speed);
+            me.transform.forward = startDir;
+        }
 
         if (!withinSeeDistance)
             return this;
@@ -32,37 +43,12 @@ public class IdleState : State
 
         if(canSeePlayer)
         {
-            //CHECK IF CLOSE TO PLAYER 
-            if (distanceToPlayer < nearRadius)
-            {
-                chase.AwakeCurrentState();
-                return chase;
-            }
-            angle = Vector3.Angle(transform.forward, player.position - transform.position);
-
-            //CHECK IF PLAYER IS INFRONT OF ME
-            withinAngle = angle < angleRadius;
-            if (withinAngle)
-            {
+            if(IsPlayerInfrontOfMe()) {
                 chase.AwakeCurrentState();
                 return chase;
             }
         }
         return this;
-    }
-
-    public bool CanSeePlayer()
-    {
-        Vector3 dir = (player.position - transform.position).normalized;
-        if (Physics.SphereCast(transform.position, 0.5f, dir, out RaycastHit hit, 100f, ~ignore))
-        {
-            if (hit.transform.root.name != "Player")
-            {
-                return false;
-            }
-            return true;
-        }
-        return false;
     }
 
     public override void AwakeCurrentState()

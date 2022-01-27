@@ -19,12 +19,15 @@ public class WeaponHandler : MonoBehaviour
     public ParticleSystem hitEffect;
     public Transform muzzlePos;
     public LineRenderer LR;
+    public int weaponDamage;
     public float FireRate;
     private float lastFired;
 
     public bool isReloading;
 
     public bool canShoot;
+
+    public float pen;
 
     // Start is called before the first frame update
     void Start()
@@ -69,17 +72,38 @@ public class WeaponHandler : MonoBehaviour
         LR.enabled = true;
         muzzleFlash.Play(true);
         LR.SetPosition(0, muzzlePos.position);
-        Vector3 direction = muzzlePos.forward*1000f;
-        if(Physics.Raycast(origin: muzzlePos.position,direction: direction, out RaycastHit hit)) 
+        Vector3 direction = muzzlePos.forward;
+        if(Physics.Raycast(origin: muzzlePos.position,direction: direction*100f, out RaycastHit hit)) 
         {
-            hit.transform.GetComponent<Health>()?.TakeDamage(10);
+            hit.transform.GetComponent<Health>()?.TakeDamage(weaponDamage);
 
-            LR.SetPosition(1, hit.point);
             hitEffect.transform.position = hit.point;
             hitEffect.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.Euler(new Vector3(90,0,0));
             hitEffect.Play(true);
+
+            Vector3 exitPoint = hit.collider.ClosestPoint(hit.point + (direction * 1.1f));
+            exitPoint.y = 1;
+            Vector3 enterPoint = hit.point;
+            enterPoint.y = 1;
+            
+            if(Vector3.Distance(exitPoint, hit.point) < pen) {
+                if(Physics.Raycast(exitPoint,direction, out RaycastHit hit2))
+                {
+                    LR.SetPosition(1, hit2.point);
+                    hit2.transform.GetComponent<Health>()?.TakeDamage(weaponDamage);
+
+                    hitEffect.transform.position = hit2.point;
+                    hitEffect.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit2.normal) * Quaternion.Euler(new Vector3(90, 0, 0));
+                    hitEffect.Play(true);
+                } else {
+                    LR.SetPosition(1, exitPoint+(direction*100f));
+                }
+            }else
+            {
+                LR.SetPosition(1, hit.point);
+            }
         } else {
-            LR.SetPosition(1, direction);
+            LR.SetPosition(1, direction*100f);
         }
         yield return new WaitForSeconds(0.05f);
         LR.enabled = false;

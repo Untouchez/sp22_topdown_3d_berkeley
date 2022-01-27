@@ -61,6 +61,7 @@
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonLightFade.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonFireProjectile.cs" />
     <Compile Include="Assets\Scripts\Blink.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\ChaseState.cs" />
     <Compile Include="Assets\Scripts\StateMachine\StateManager.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonSoundSpawn.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonLightFlicker.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Assets\RigAnimations.cs" />
     <Compile Include="Assets\Scripts\StateMachine\IdleState.cs" />
     <Compile Include="Assets\Laser.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\AttackState.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonLoopScript.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonSceneSelect.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonBeamStatic.cs" />
@@ -78,8 +80,7 @@
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonOrbit.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Scripts\PolygonRotation.cs" />
     <Compile Include="Assets\Art\IMPORTED\Polygon Arsenal\Demo\Scripts\PolygonBeamScript.cs" />
-    <Compile Include="Assets\Scripts\StateMachine\ChaseState.cs" />
-    <Compile Include="Assets\Scripts\StateMachine\AttackState.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\AlarmedState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Art\IMPORTED\Polygon Arsenal\Shaders\Standard\PolyIntense.Shader" />

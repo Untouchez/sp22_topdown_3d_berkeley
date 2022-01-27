@@ -22,7 +22,7 @@ public class Enemy : Health
     public override void TakeDamage(int damage)
     {
         base.TakeDamage(damage);
-        blink.BlinkME(0.15f, 5f, Color.white);
+        blink.BlinkME(0.1f*damage, damage/2, Color.white);
     }
 
     public void FootR()

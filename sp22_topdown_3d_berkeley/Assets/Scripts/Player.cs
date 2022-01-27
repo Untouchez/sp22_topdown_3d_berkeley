@@ -134,8 +134,8 @@ public class Player : MonoBehaviour
         float calculatedY;
 
         if (lookAt) {
-            calculatedX = inputRaw.x * lookAtAcceleration * Time.deltaTime;
-            calculatedY = inputRaw.y * lookAtAcceleration * Time.deltaTime;
+            calculatedX = inputRaw.normalized.x * lookAtAcceleration * Time.deltaTime;
+            calculatedY = inputRaw.normalized.y * lookAtAcceleration * Time.deltaTime;
 
             inputCalculated.x = Mathf.Clamp(inputCalculated.x, -lookAtMovementClamp, lookAtMovementClamp);
             inputCalculated.y = Mathf.Clamp(inputCalculated.y, -lookAtMovementClamp, lookAtMovementClamp);
