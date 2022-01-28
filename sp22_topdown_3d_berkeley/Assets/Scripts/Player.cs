@@ -58,49 +58,10 @@ public class Player : MonoBehaviour
         HandleRoll();
     }
 
-    Vector3 tempDir;
-    void HandleRoll()
-    {
-        if(Input.GetKeyDown(KeyCode.LeftShift)) {
-            if(!isRolling)
-                StartCoroutine(StartRoll());
-        }
-            
-        if (isRolling) {
-            rb.velocity += tempDir * rollForce;
-            RotateTowardsDir(tempDir);
-        }
-    }
-
-    IEnumerator StartRoll()
-    {
-        weaponHandler.weapon.SetActive(false);
-        isRolling = true;
-        weaponHandler.canShoot = false;
-        topHalfAim.weight = 0;
-        lookAt = false;
-        weaponAim.weight = 0;
-        canRotate = false;
-        anim.SetLayerWeight(1, 0);
-        anim.Play("roll", 0, 0);
-        tempDir = new Vector3(inputRaw.x, 0, inputRaw.y);
-
-        yield return new WaitForSeconds(0.8f);
-
-        anim.SetLayerWeight(1, 1);
-        weaponHandler.weapon.SetActive(true);
-        canRotate = true;
-        topHalfAim.weight = 1;
-        lookAt = true;
-        weaponAim.weight = 1;
-        weaponHandler.canShoot = true;
-
-        isRolling = false;
-    }
-
     void HandleLookAt()
     {
         if (Input.GetMouseButton(1)) {
+            //GUN UP
             topHalfAim.weight = 1;
             weaponAim.weight = 1;
             lookAt = true;
@@ -109,19 +70,19 @@ public class Player : MonoBehaviour
                 Vector3 newPos = hit.point;
                 mousePos.position = newPos;
             }
-            anim.SetBool("lookAt", lookAt);
         } else { 
-            anim.SetBool("lookAt", lookAt);
+            //GUN DOWN
             topHalfAim.weight = 0;
             weaponAim.weight = 0;
             lookAt = false;
         }
         if(weaponHandler.isReloading) {
             lookAt = false;
-            anim.SetBool("lookAt", lookAt);
             topHalfAim.weight = 0;
             weaponAim.weight = 0;
         }
+
+        anim.SetBool("lookAt", lookAt);
         rigAnim.SetBool("lookAt", lookAt);
     }
 
@@ -155,6 +116,8 @@ public class Player : MonoBehaviour
         inputCalculated.y += calculatedY;
 
         rotDir = new Vector3(inputCalculated.x, 0, inputCalculated.y);
+
+        //if im moving in the opposite direction im moving then slow down
         Vector3 temp = new Vector3(transform.forward.x, 0, transform.forward.z);
         differenceAngle = Vector3.Angle(rotDir, temp);
         if(differenceAngle > 90)
@@ -170,19 +133,20 @@ public class Player : MonoBehaviour
     {
         if (!canMove)
             return;
-
+        //IF NO INPUT FROM WS THEN SLOW DOWN
         if (inputRaw.x == 0)
             inputCalculated.x = Mathf.MoveTowards(inputCalculated.x, 0, decceleration * Time.deltaTime);
         else
             HandleRotation();
 
+        //IF NO INPUT FROM AD THEN SLOW DOWN
         if (inputRaw.y == 0)
             inputCalculated.y = Mathf.MoveTowards(inputCalculated.y, 0, decceleration * Time.deltaTime);
         else
             HandleRotation();
 
-        if (lookAt)
-        {
+        //IF GUN UP THEN I WANT TO PLAY MOVING ANIMATION
+        if (lookAt) {
             if (inputCalculated != Vector2.zero)
             {
                 anim.SetFloat("Vertical", animVector.y);
@@ -193,15 +157,13 @@ public class Player : MonoBehaviour
             }
             HandleRotation();
         } else {
-            if (inputCalculated != Vector2.zero)
-            {
-                anim.SetFloat("Vertical", inputCalculated.magnitude / 5);
-            }
-            else
-            {
-                anim.SetFloat("Vertical", 0);
-            }
+            if (inputCalculated != Vector2.zero)            
+                anim.SetFloat("Vertical", animVector.y);            
+            else         
+                anim.SetFloat("Vertical", Mathf.MoveTowards(anim.GetFloat("Vertical"),0,0.2f));
+            
         }      
+        //MOVE PLAYER USING RIGIDBODY PHYSICS
         rb.velocity = new Vector3(inputCalculated.x, 0, inputCalculated.y);
     }
 
@@ -214,8 +176,51 @@ public class Player : MonoBehaviour
         {
             RotateTowards(mousePos); 
         } else {
+            //ROTATE TO MOVEMENT DIRECTION
             RotateTowardsDir(rotDir);
         }
+    }
+
+    Vector3 tempDir;
+    void HandleRoll()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (!isRolling && inputRaw.magnitude != 0)
+                StartCoroutine(StartRoll());
+        }
+
+        if (isRolling)
+        {
+            rb.velocity += tempDir * rollForce;
+            RotateTowardsDir(tempDir);
+        }
+    }
+
+    IEnumerator StartRoll()
+    {
+        weaponHandler.weapon.SetActive(false);
+        isRolling = true;
+        weaponHandler.canShoot = false;
+        topHalfAim.weight = 0;
+        lookAt = false;
+        weaponAim.weight = 0;
+        canRotate = false;
+        anim.SetLayerWeight(1, 0);
+        anim.Play("roll", 0, 0);
+        tempDir = new Vector3(inputRaw.x, 0, inputRaw.y);
+
+        yield return new WaitForSeconds(0.8f);
+
+        anim.SetLayerWeight(1, 1);
+        weaponHandler.weapon.SetActive(true);
+        canRotate = true;
+        topHalfAim.weight = 1;
+        lookAt = true;
+        weaponAim.weight = 1;
+        weaponHandler.canShoot = true;
+
+        isRolling = false;
     }
 
     //https://docs.unity3d.com/ScriptReference/Vector3.RotateTowards.html

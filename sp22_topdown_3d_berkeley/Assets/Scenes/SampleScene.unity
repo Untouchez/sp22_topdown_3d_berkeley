@@ -5855,11 +5855,11 @@ MonoBehaviour:
   decceleration: 35
   acceleration: 15
   lookAtAcceleration: 10
-  movementClamp: 5
+  movementClamp: 3
   lookAtMovementClamp: 2
   angleDifferenceMovementClamp: 2
   differenceAngle: 10
-  rotSpeed: 6
+  rotSpeed: 3
   lookAt: 0
   isRolling: 0
   rollForce: 4
@@ -13695,8 +13695,9 @@ MonoBehaviour:
   hitEffect: {fileID: 104754825}
   muzzlePos: {fileID: 1468189421}
   LR: {fileID: 7050629736770610668}
-  weaponDamage: 0
+  weaponDamage: 10
   FireRate: 10
+  weaponSpread: 0.1
   isReloading: 0
   canShoot: 1
   pen: 1
@@ -37445,6 +37446,7 @@ LineRenderer:
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 5.62}
+  - {x: 0, y: 0, z: 5.62}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -37453,7 +37455,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.047620177
+        value: 0.07393195
         inSlope: 0
         outSlope: 0
         tangentMode: 0
